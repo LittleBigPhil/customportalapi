@@ -31,8 +31,8 @@ import net.minecraft.world.World;
 public class CustomPortalsMod implements ModInitializer {
     public static final String MOD_ID = "customportalapi";
     public static CustomPortalBlock portalBlock;
-    public static Identifier VANILLAPORTAL_FRAMETESTER = new Identifier(MOD_ID, "vanillanether");
-    public static Identifier FLATPORTAL_FRAMETESTER = new Identifier(MOD_ID, "flat");
+    public static Identifier VANILLAPORTAL_FRAMETESTER = Identifier.of(MOD_ID, "vanillanether");
+    public static Identifier FLATPORTAL_FRAMETESTER = Identifier.of(MOD_ID, "flat");
     public static PortalLinkingStorage portalLinkingStorage;
 
     @Override
@@ -77,6 +77,6 @@ public class CustomPortalsMod implements ModInitializer {
     //todo fix this with CustomPortalBuilder?
     static {
         portalBlock = new CustomPortalBlock(AbstractBlock.Settings.create().noCollision().ticksRandomly().strength(-1.0f).sounds(BlockSoundGroup.GLASS).luminance(state -> 11).pistonBehavior(PistonBehavior.BLOCK));
-        Registry.register(Registries.BLOCK, new Identifier(CustomPortalsMod.MOD_ID, "customportalblock"), portalBlock);
+        Registry.register(Registries.BLOCK, Identifier.of(CustomPortalsMod.MOD_ID, "customportalblock"), portalBlock);
     }
 }

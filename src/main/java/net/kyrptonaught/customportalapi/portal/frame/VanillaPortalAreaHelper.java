@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -136,7 +137,7 @@ public class VanillaPortalAreaHelper extends PortalFrameTester {
     }
 
     @Override
-    public TeleportTarget getTPTargetInPortal(BlockLocating.Rectangle portalRect, Direction.Axis portalAxis, Vec3d prevOffset, Entity entity) {
+    public TeleportTarget getTPTargetInPortal(ServerWorld world, BlockLocating.Rectangle portalRect, Direction.Axis portalAxis, Vec3d prevOffset, Entity entity) {
         EntityDimensions entityDimensions = entity.getDimensions(entity.getPose());
         double width = portalRect.width - entityDimensions.width();
         double height = portalRect.height - entityDimensions.height();
@@ -148,7 +149,9 @@ public class VanillaPortalAreaHelper extends PortalFrameTester {
         else if (portalAxis == Direction.Axis.Z)
             x = portalRect.lowerLeft.getX() + .5D;
 
-        return new TeleportTarget(new Vec3d(x, y, z), entity.getVelocity(), entity.getYaw(), entity.getPitch());
+        return new TeleportTarget(world, new Vec3d(x, y, z), entity.getVelocity(), entity.getYaw(), entity.getPitch(), entity1 -> {
+
+        });
     }
 
     public void lightPortal(Block frameBlock) {

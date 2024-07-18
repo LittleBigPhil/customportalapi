@@ -9,6 +9,8 @@ import net.kyrptonaught.customportalapi.interfaces.ClientPlayerInColoredPortal;
 import net.kyrptonaught.customportalapi.interfaces.EntityInCustomPortal;
 import net.kyrptonaught.customportalapi.util.CustomPortalHelper;
 import net.kyrptonaught.customportalapi.util.PortalLink;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
@@ -62,9 +64,10 @@ public abstract class ClientPlayerMixin extends PlayerEntity implements EntityIn
     }
 
 
-    @Inject(method = "updateNausea", at = @At(value = "HEAD"), cancellable = true)
+    //@Inject(method = "updateNausea", at = @At(value = "HEAD"), cancellable = true)
     public void injectCustomNausea(CallbackInfo ci) {
-        if (this.inNetherPortal) {
+        boolean isInNetherPortal = this.portalManager.isInPortal() && this.portalManager.portalMatches((NetherPortalBlock) Blocks.NETHER_PORTAL);
+        if (isInNetherPortal) {
             setLastUsedPortalColor(-1);
         } else if (this.getTimeInPortal() > 0) {
             int previousColor = getLastUsedPortalColor();

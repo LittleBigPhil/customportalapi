@@ -7,7 +7,7 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
 public record LinkSyncPacket(Identifier blockID, Identifier dimID, int color) implements CustomPayload {
-    public static final CustomPayload.Id<LinkSyncPacket> PACKET_ID = new CustomPayload.Id<>(new Identifier(CustomPortalsMod.MOD_ID, "syncportals"));
+    public static final CustomPayload.Id<LinkSyncPacket> PACKET_ID = new CustomPayload.Id<>(Identifier.of(CustomPortalsMod.MOD_ID, "syncportals"));
     public static final PacketCodec<RegistryByteBuf, LinkSyncPacket> codec = PacketCodec.of(LinkSyncPacket::write, LinkSyncPacket::read);
 
     public static LinkSyncPacket read(RegistryByteBuf buf) {

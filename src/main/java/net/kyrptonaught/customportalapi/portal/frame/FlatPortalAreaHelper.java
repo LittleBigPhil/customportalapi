@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -159,7 +160,7 @@ public class FlatPortalAreaHelper extends PortalFrameTester {
     }
 
     @Override
-    public TeleportTarget getTPTargetInPortal(BlockLocating.Rectangle portalRect, Direction.Axis portalAxis, Vec3d prevOffset, Entity entity) {
+    public TeleportTarget getTPTargetInPortal(ServerWorld world, BlockLocating.Rectangle portalRect, Direction.Axis portalAxis, Vec3d prevOffset, Entity entity) {
         EntityDimensions entityDimensions = entity.getDimensions(entity.getPose());
         double xSize = portalRect.width - entityDimensions.width();
         double zSize = portalRect.height - entityDimensions.width();
@@ -168,6 +169,8 @@ public class FlatPortalAreaHelper extends PortalFrameTester {
         double y = MathHelper.lerp(prevOffset.y, portalRect.lowerLeft.getY() - 1, portalRect.lowerLeft.getY() + 1);
         double z = MathHelper.lerp(prevOffset.z, portalRect.lowerLeft.getZ(), portalRect.lowerLeft.getZ() + zSize);
 
-        return new TeleportTarget(new Vec3d(x, portalRect.lowerLeft.getY() + 1, z), entity.getVelocity(), entity.getYaw(), entity.getPitch());
+        return new TeleportTarget(world, new Vec3d(x, portalRect.lowerLeft.getY() + 1, z), entity.getVelocity(), entity.getYaw(), entity.getPitch(), (TeleportTarget.PostDimensionTransition) entity1 -> {
+            // Do nothing
+        });
     }
 }

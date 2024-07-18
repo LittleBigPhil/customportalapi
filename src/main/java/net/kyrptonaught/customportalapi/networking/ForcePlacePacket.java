@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public record ForcePlacePacket(BlockPos pos, int axis) implements CustomPayload {
-    public static final CustomPayload.Id<ForcePlacePacket> PACKET_ID = new CustomPayload.Id<>(new Identifier(CustomPortalsMod.MOD_ID, "forceplace"));
+    public static final CustomPayload.Id<ForcePlacePacket> PACKET_ID = new CustomPayload.Id<>(Identifier.of(CustomPortalsMod.MOD_ID, "forceplace"));
     public static final PacketCodec<RegistryByteBuf, ForcePlacePacket> codec = PacketCodec.of(ForcePlacePacket::write, ForcePlacePacket::read);
 
     public static ForcePlacePacket read(RegistryByteBuf buf) {

@@ -31,7 +31,7 @@ public class PortalLinkingStorage extends PersistentState {
         for (int i = 0; i < links.size(); i++) {
             NbtCompound link = links.getCompound(i);
             DimensionalBlockPos toTag = DimensionalBlockPos.fromTag(link.getCompound("to"));
-            cman.addLink(BlockPos.fromLong(link.getLong("fromPos")), new Identifier(link.getString("fromDimID")), toTag.pos, toTag.dimensionType);
+            cman.addLink(BlockPos.fromLong(link.getLong("fromPos")), Identifier.of(link.getString("fromDimID")), toTag.pos, toTag.dimensionType);
         }
         return cman;
     }

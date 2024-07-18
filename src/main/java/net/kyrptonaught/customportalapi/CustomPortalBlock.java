@@ -8,13 +8,13 @@ import net.kyrptonaught.customportalapi.portal.frame.PortalFrameTester;
 import net.kyrptonaught.customportalapi.util.CustomPortalHelper;
 import net.kyrptonaught.customportalapi.util.CustomTeleporter;
 import net.kyrptonaught.customportalapi.util.PortalLink;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
+import net.minecraft.client.session.report.ReporterEnvironment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -24,12 +24,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.*;
+import org.jetbrains.annotations.Nullable;
 
-public class CustomPortalBlock extends Block {
+public class CustomPortalBlock extends Block implements Portal {
     public static final EnumProperty<Direction.Axis> AXIS = Properties.AXIS;
     protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0.0D, 0.0D, 6.0D, 16.0D, 16.0D, 10.0D);
     protected static final VoxelShape Z_SHAPE = Block.createCuboidShape(6.0D, 0.0D, 0.0D, 10.0D, 16.0D, 16.0D);
@@ -111,15 +109,38 @@ public class CustomPortalBlock extends Block {
         EntityInCustomPortal entityInPortal = (EntityInCustomPortal) entity;
         entityInPortal.tickInPortal(pos.toImmutable());
         if (!entityInPortal.didTeleport()) {
-            if (entityInPortal.getTimeInPortal() >= entity.getMaxNetherPortalTime()) {
-                entityInPortal.setDidTP(true);
-                if (!world.isClient)
-                    CustomTeleporter.TPToDim(world, entity, getPortalBase(world, pos), pos);
+            if (world instanceof ServerWorld) { // Added this to prevent crash
+                if (entityInPortal.getTimeInPortal() >= this.getPortalDelay((ServerWorld) world, entity)) {
+                    entityInPortal.setDidTP(true);
+                    if (!world.isClient)
+                        CustomTeleporter.TPToDim(world, entity, getPortalBase(world, pos), pos);
+                }
             }
         }
     }
 
+
+    @Override
+    public int getPortalDelay(ServerWorld world, Entity entity) {
+        return entity instanceof PlayerEntity playerEntity
+                ? Math.max(
+                1,
+                world.getGameRules()
+                        .getInt(playerEntity.getAbilities().invulnerable ? GameRules.PLAYERS_NETHER_PORTAL_CREATIVE_DELAY : GameRules.PLAYERS_NETHER_PORTAL_DEFAULT_DELAY)
+        )
+                : 0;
+    }
+
     public Block getPortalBase(World world, BlockPos pos) {
         return CustomPortalHelper.getPortalBaseDefault(world, pos);
+    }
+
+    @Nullable
+    @Override
+    public TeleportTarget createTeleportTarget(ServerWorld world, Entity entity, BlockPos pos) {
+        Block frameBlock = null;
+        PortalFrameTester.PortalFrameTesterFactory frameTester = null;
+        return CustomTeleporter.customTPTarget(world,entity,pos, frameBlock, frameTester); // I think the serverworld needs to be swapped to the desired destination instead of the current one
+        //return null;
     }
 }

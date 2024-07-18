@@ -91,17 +91,17 @@ public abstract class EntityMixin implements EntityInCustomPortal, CustomTelepor
         return customTPTarget;
     }
 
-    @Inject(method = "getTeleportTarget", at = @At("HEAD"), cancellable = true)
+    //@Inject(method = "getTeleportTarget", at = @At("HEAD"), cancellable = true)
     public void CPAgetCustomTPTarget(ServerWorld destination, CallbackInfoReturnable<TeleportTarget> cir) {
         if (this.didTeleport())
             cir.setReturnValue(getCustomTeleportTarget());
     }
 
-    @Redirect(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;createEndSpawnPlatform(Lnet/minecraft/server/world/ServerWorld;)V"))
+    //@Redirect(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;createEndSpawnPlatform(Lnet/minecraft/server/world/ServerWorld;)V"))
     public void CPAcancelEndPlatformSpawn(ServerWorld world) {
         if (this.didTeleport())
             return;
-        ServerWorld.createEndSpawnPlatform(world);
+        //ServerWorld.createEndSpawnPlatform(world);
     }
 
     @Inject(method = "readNbt", at = @At(value = "TAIL"))
